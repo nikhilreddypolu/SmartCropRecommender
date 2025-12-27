@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Predict{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h3 class="mb-0"><i class="fa-solid fa-flask"></i> Crop Recommendation</h3>
+          <div class="d-none d-lg-inline text-muted small">
+            <i class="fa-solid fa-circle-info me-1"></i> Enter numeric values (Humidity 0–100, pH 0–14)
+          </div>
+        </div>
+        <hr>
+        <form method="post" id="predictForm">
+          {% csrf_token %}
+          <div class="row g-3">
+            {% for c in feature_order %}
+              <div class="col-md-4">
+                <label class="form-label text-uppercase">{{ c }}</label>
+                {% if c == 'humidity' %}
+                  <input type="number" step="any" min="0" max="100" name="{{ c }}" class="form-control" required placeholder="e.g., 80">
+                {% elif c == 'ph' %}
+                  <input type="number" step="any" min="0" max="14" name="{{ c }}" class="form-control" required placeholder="e.g., 6.5">
+                {% else %}
+                  <input type="number" step="any" min="0" name="{{ c }}" class="form-control" required placeholder="e.g., 90">
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button class="btn btn-success">
+              <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Predict
+            </button>
+            <button class="btn btn-outline-secondary" type="button" id="btnSample">
+              <i class="fa-solid fa-bolt me-1"></i> Use Sample
+            </button>
+            <button class="btn btn-outline-danger" type="button" id="btnReset">
+              <i class="fa-solid fa-rotate-left me-1"></i> Reset
+            </button>
+          </div>
+        </form>
+
+        {% if result %}
+          <hr>
+          <div class="alert alert-success d-flex align-items-center justify-content-between">
+            <div>
+              ✅ Recommended Crop: <strong id="predText">{{ result|title }}</strong>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-success" type="button" id="btnCopy">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+             
+            </div>
+          </div>
+          {% if last_data %}
+          <div class="small text-muted">
+            <i class="fa-regular fa-clock me-1"></i> Inputs used:
+            {% for k,v in last_data.items %}<code>{{ k }}={{ v }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}
+          </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="mb-2"><i class="fa-solid fa-lightbulb"></i> Tips</h5>
+        <ul class="small text-muted mb-0">
+          <li>Use realistic local values for temperature, humidity & rainfall.</li>
+          <li>Soil pH valid range 0–14 (most crops prefer ~6–7).</li>
+          <li>Save multiple predictions and compare in your History.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card shadow-sm border-0 mt-3">
+      <div class="card-body">
+        <h6 class="mb-2"><i class="fa-solid fa-circle-question"></i> What is N-P-K?</h6>
+        <p class="small text-muted mb-0">
+          N (Nitrogen), P (Phosphorus), K (Potassium) — key soil nutrients affecting crop growth.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const form = document.getElementById('predictForm');
+  const inputs = form ? form.querySelectorAll('input[name]') : [];
+  const sample = {N:90, P:40, K:40, temperature:20, humidity:80, ph:7, rainfall:200};
+
+  // Sample-fill
+  document.getElementById('btnSample')?.addEventListener('click', () => {
+    inputs.forEach(inp => {
+      const key = inp.name;
+      if (sample[key] !== undefined) inp.value = sample[key];
+    });
+    Swal.fire({icon:'info', title:'Sample filled'});
+  });
+
+  // Reset
+  document.getElementById('btnReset')?.addEventListener('click', () => {
+    form.reset();
+  });
+
+  // Copy result
+  document.getElementById('btnCopy')?.addEventListener('click', async () => {
+    const text = "Recommended Crop: " + (document.getElementById('predText')?.innerText || '');
+    try {
+      await navigator.clipboard.writeText(text);
+      Swal.fire({icon:'success', title:'Copied', text:text});
+    } catch {
+      Swal.fire({icon:'warning', title:'Copy failed'});
+    }
+  });
+
+ 
+
+
+})();
+</script>
+{% endblock %}

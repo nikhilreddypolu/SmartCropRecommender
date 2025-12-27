@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Signup{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-9 col-lg-10">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="row g-0">
+        <!-- Left: Visual Panel -->
+        {% comment %} <div class="col-md-6 d-none d-md-block position-relative"
+             style="background:url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1400&auto=format&fit=crop') center/cover no-repeat;"> {% endcomment %}
+
+             <div class="col-md-6 d-none d-md-block position-relative"
+             style="background:url('/static/images/carousel3.png') center/cover no-repeat;">
+          <div class="position-absolute top-0 start-0 w-100 h-100"
+               style="background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.5));"></div>
+          <div class="position-absolute bottom-0 text-white p-4">
+            <h4 class="fw-bold mb-2"><i class="fa-solid fa-wheat-awn"></i> Create your account</h4>
+            <p class="mb-3 text-white-50">Predict crops, save history, export CSV — all in one dashboard.</p>
+            <ul class="small list-unstyled mb-0">
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>Secure & private</li>
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>Fast ML predictions</li>
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>Modern responsive UI</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="col-md-6 bg-white">
+          <div class="p-4 p-md-5">
+            <h3 class="mb-3"><i class="fa-solid fa-user-plus"></i> Create Account</h3>
+
+            <form method="post" id="signupForm" novalidate>
+              {% csrf_token %}
+
+              <div class="row g-3">
+                <div class="col-md-12">
+                  <label class="form-label">Full Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+                    <input type="text" name="name" class="form-control" placeholder="e.g., Test User" required>
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <label class="form-label">Phone (optional)</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                    <input type="tel" name="phone" class="form-control" inputmode="numeric" placeholder="e.g., 1122******">
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <label class="form-label">Email (username)</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <label class="form-label">Password <span class="text-muted small">(min 6 chars)</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                    <input type="password" name="password" id="pwd1" class="form-control" placeholder="••••••••" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePwd1" title="Show/Hide">
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </div>
+                  <!-- Strength meter -->
+                  <div class="progress mt-2" style="height:6px;">
+                    <div class="progress-bar" id="pwdStrength" role="progressbar" style="width:0%"></div>
+                  </div>
+                  <div class="small mt-1" id="pwdHint"></div>
+                </div>
+
+                <div class="col-md-12">
+                  <label class="form-label">Confirm Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-shield"></i></span>
+                    <input type="password" id="pwd2" class="form-control" placeholder="••••••••" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePwd2" title="Show/Hide">
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="agree">
+                    <label class="form-check-label" for="agree">
+                      I agree to the <a href="#" onclick="Swal.fire('Info','Add terms & privacy page later.','info');return false;">Terms & Privacy</a>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-success mt-3 w-100 d-flex align-items-center justify-content-center gap-2" id="signupBtn">
+                <span class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status" aria-hidden="true"></span>
+                <span>Create Account</span>
+              </button>
+
+              <div class="text-center mt-3">
+                <span class="text-muted small">Already have an account?</span>
+                <a href="/login/" class="small text-decoration-none ms-1"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div> <!-- /row -->
+    </div>
+  </div>
+</div>
+
+<script>
+function scorePassword(p) {
+  let score = 0;
+  if (!p) return 0;
+  const letters = {};
+  for (let i=0; i<p.length; i++) {
+    letters[p[i]] = (letters[p[i]] || 0) + 1;
+    score += 5.0 / letters[p[i]];
+  }
+  const variations = {
+    digits: /\d/.test(p),
+    lower: /[a-z]/.test(p),
+    upper: /[A-Z]/.test(p),
+    nonWords: /\W/.test(p),
+  };
+  let variationCount = 0;
+  for (let check in variations) { variationCount += (variations[check] === true) ? 1 : 0; }
+  score += (variationCount - 1) * 10;
+  return parseInt(score);
+}
+
+function updateStrength() {
+  const p = document.getElementById('pwd1').value || '';
+  const bar = document.getElementById('pwdStrength');
+  const hint = document.getElementById('pwdHint');
+  const s = scorePassword(p);
+  let pct = Math.min(100, Math.max(0, s));
+  bar.style.width = pct + '%';
+  bar.classList.remove('bg-danger','bg-warning','bg-success');
+  if (p.length < 6) {
+    bar.classList.add('bg-danger'); hint.textContent = 'Too short';
+  } else if (pct < 40) {
+    bar.classList.add('bg-danger'); hint.textContent = 'Weak';
+  } else if (pct < 70) {
+    bar.classList.add('bg-warning'); hint.textContent = 'Medium';
+  } else {
+    bar.classList.add('bg-success'); hint.textContent = 'Strong';
+  }
+}
+
+document.getElementById('pwd1')?.addEventListener('input', updateStrength);
+
+// show/hide
+const toggle = (btnId, inpId) => {
+  document.getElementById(btnId)?.addEventListener('click', function(){
+    const f = document.getElementById(inpId);
+    const icon = this.querySelector('i');
+    if (!f) return;
+    f.type = (f.type === 'password') ? 'text' : 'password';
+    icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash');
+  });
+};
+toggle('togglePwd1','pwd1');
+toggle('togglePwd2','pwd2');
+
+// spinner + client validations
+document.getElementById('signupForm')?.addEventListener('submit', function(e){
+  const pwd1 = document.getElementById('pwd1').value || '';
+  const pwd2 = document.getElementById('pwd2').value || '';
+  const agree = document.getElementById('agree').checked;
+
+  if (pwd1.length < 6) {
+    e.preventDefault();
+    Swal.fire({icon:'error', title:'Password too short', text:'Minimum 6 characters required.'});
+    return;
+  }
+  if (pwd1 !== pwd2) {
+    e.preventDefault();
+    Swal.fire({icon:'error', title:'Passwords do not match'});
+    return;
+  }
+  if (!agree) {
+    e.preventDefault();
+    Swal.fire({icon:'info', title:'Please accept Terms & Privacy to continue.'});
+    return;
+  }
+
+  const btn = document.getElementById('signupBtn');
+  const spn = document.getElementById('btnSpinner');
+  btn?.setAttribute('disabled','true');
+  spn?.classList.remove('d-none');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% comment %} Tiny inline filter replacement: use attr widget in forms instead if preferred {% endcomment %}
+
+{% block title %}Predict | Crop Recommender{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="mb-3">Enter Soil & Weather Details</h3>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            {% for field in form %}
+              <div class="col-md-6">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors|striptags }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="mt-3">
+            <button class="btn btn-success px-4" type="submit">
+              Get Recommendation
+            </button>
+          </div>
+        </form>
+
+        {% if result %}
+          <hr>
+          <div class="alert alert-info mt-3">
+            ✅ Recommended Crop: <strong>{{ result|title }}</strong>
+          </div>
+        {% endif %}
+
+        <p class="text-muted mt-3 mb-0">
+          Feature order used: {{ feature_order|join:", " }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

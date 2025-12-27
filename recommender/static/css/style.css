@@ -1,0 +1,45 @@
+
+/* recommender/static/css/style.css */
+.card { border-radius: 1rem; }
+.btn { border-radius: .8rem; }
+.alert code { background:#f7f7f7; padding:.1rem .35rem; border-radius:.35rem; }
+
+
+/* Hero & footer gradients */
+.hero-gradient{
+  background: linear-gradient(135deg, #2e7d32, #66bb6a);
+}
+.footer-gradient{
+  background: linear-gradient(135deg, #1b5e20, #388e3c);
+}
+
+/* Stats tiles (hero bottom) */
+.stat-tile{
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 1rem;
+  padding: .8rem 1rem;
+  color: #fff;
+}
+.stat-kicker{ font-size: .85rem; opacity: .8; }
+.stat-value{ font-size: 1.6rem; font-weight: 700; line-height: 1; }
+
+/* Icon badge before section headers */
+.icon-badge{
+  width: 44px; height: 44px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(46,125,50,.1); color: #2e7d32;
+}
+
+/* Steps */
+.step .step-num{
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #e8f5e9; color:#2e7d32; display:flex; align-items:center; justify-content:center;
+  font-weight: 700; margin-bottom: .6rem;
+}
+
+/* Buttons/cards global tweak (already may exist) */
+.card { border-radius: 1rem; }
+.btn  { border-radius: .8rem; }
+
+
