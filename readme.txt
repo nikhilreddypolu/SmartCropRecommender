@@ -1,9 +1,1 @@
-numpy==2.0.2
-scikit-learn==1.6.1
-
-python 3.12
-
-===================
-login credentials
-admin name - admin
-pwd - admin
+SmartCrop Recommendation System is a machine learning–based web application developed using Python, Django, and Random Forest algorithm to recommend the most suitable crop based on soil nutrients (N, P, K), weather conditions, and soil moisture. The system preprocesses agricultural data, trains and evaluates a Random Forest model to achieve accurate predictions, and provides results through a user-friendly Django web interface, helping farmers and agricultural planners make data-driven crop selection decisions.
