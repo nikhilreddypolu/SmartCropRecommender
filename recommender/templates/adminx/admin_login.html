@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-8 col-lg-9">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="row g-0">
+        <!-- Left: Visual / Brand -->
+        {% comment %} <div class="col-md-6 d-none d-md-block position-relative"
+             style="background:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop') center/cover no-repeat;"> {% endcomment %}
+              <div class="col-md-6 d-none d-md-block position-relative"
+             style="background:url('/static/images/carousel1.png') center/cover no-repeat;">
+          <div class="position-absolute top-0 start-0 w-100 h-100"
+               style="background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.6));"></div>
+          <div class="position-absolute bottom-0 text-white p-4">
+            <h4 class="fw-bold mb-2"><i class="fa-solid fa-shield-halved"></i> Admin Console</h4>
+            <p class="mb-3 text-white-50">Manage users, monitor predictions, and export reports.</p>
+            <ul class="small list-unstyled mb-0">
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>Staff-only secure area</li>
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>Charts & insights dashboard</li>
+              <li class="mb-1"><i class="fa-solid fa-circle-check me-2"></i>CSV exports & filters</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="col-md-6 bg-white">
+          <div class="p-4 p-md-5">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h3 class="mb-0"><i class="fa-solid fa-user-shield"></i> Admin Login</h3>
+              <a href="/login/" class="small text-decoration-none">
+                <i class="fa-solid fa-user"></i> User Login
+              </a>
+            </div>
+
+            <form method="post" id="adminLoginForm" novalidate>
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label class="form-label">Username / Email</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+                  <input type="text" name="username" class="form-control" placeholder="admin@example.com" required>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                  <input type="password" name="password" class="form-control" id="pwdField" placeholder="••••••••" required>
+                  <button class="btn btn-outline-secondary" type="button" id="togglePwd" title="Show/Hide">
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="alert alert-light border small d-flex align-items-center gap-2 mb-3">
+                <i class="fa-solid fa-lock"></i>
+                <div>Staff accounts only. Contact your super admin for access.</div>
+              </div>
+
+              <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2" id="loginBtn">
+                <span class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status" aria-hidden="true"></span>
+                <span>Login</span>
+              </button>
+
+              <div class="d-flex justify-content-between mt-3">
+                <a href="/" class="small text-decoration-none"><i class="fa-solid fa-house"></i> Back to site</a>
+                <a href="#" class="small text-decoration-none"
+                   onclick="Swal.fire('Need help?','Ask your super admin to reset your password.','info');return false;">
+                  <i class="fa-regular fa-circle-question"></i> Forgot password?
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div> <!-- /row -->
+    </div>
+  </div>
+</div>
+
+<script>
+// Show/Hide password
+document.getElementById('togglePwd')?.addEventListener('click', function(){
+  const f = document.getElementById('pwdField');
+  const icon = this.querySelector('i');
+  if (!f) return;
+  f.type = (f.type === 'password') ? 'text' : 'password';
+  icon.classList.toggle('fa-eye');
+  icon.classList.toggle('fa-eye-slash');
+});
+
+// Spinner on submit
+document.getElementById('adminLoginForm')?.addEventListener('submit', function(){
+  const btn = document.getElementById('loginBtn');
+  const spn = document.getElementById('btnSpinner');
+  btn?.setAttribute('disabled','true');
+  spn?.classList.remove('d-none');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My History{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h3 class="mb-0"><i class="fa-solid fa-clock-rotate-left"></i> Prediction History</h3>
+  <a href="{% url 'user_history_export_csv' %}" class="btn btn-outline-success">
+    <i class="fa-solid fa-file-csv me-1"></i> Export CSV
+  </a>
+</div>
+
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle datatable">
+  <thead class="table-success">
+    <tr>
+      <th>When</th><th>Crop</th><th>N</th><th>P</th><th>K</th><th>Temp</th><th>Hum</th><th>pH</th><th>Rain</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for it in items %}
+    <tr>
+      <td>{{ it.created_at|date:"d M Y H:i" }}</td>
+      <td><span class="badge bg-success">{{ it.predicted_label|title }}</span></td>
+      <td>{{ it.N }}</td><td>{{ it.P }}</td><td>{{ it.K }}</td>
+      <td>{{ it.temperature }}</td><td>{{ it.humidity }}</td><td>{{ it.ph }}</td><td>{{ it.rainfall }}</td>
+      <td>
+        <form method="post" action="{% url 'user_delete_prediction' it.id %}" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-danger" data-confirm="delete" title="Delete">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </form>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="10" class="text-center text-muted">No predictions yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
